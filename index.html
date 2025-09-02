@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Felicitaciones por tu Graduación!</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            padding: 20px;
+        }
+        
+        .envelope-container {
+            position: relative;
+            width: 450px;
+            height: 300px;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: all 0.8s ease;
+        }
+        
+        .envelope-container.opened {
+            width: 500px;
+            height: 600px;
+            transform: scale(1);
+        }
+        
+        .envelope-container:hover {
+            transform: scale(1.02);
+        }
+        
+        .envelope-container.opened:hover {
+            transform: scale(1);
+        }
+        
+        .envelope-container.opened {
+            cursor: default;
+        }
+        
+        /* Base del sobre */
+        .envelope-base {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #c8860d, #ffd700);
+            border-radius: 8px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+        }
+        
+        /* Solapa del sobre */
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(145deg, #b8860b, #e6c200);
+            transform-origin: top center; /* 👈 CAMBIO: la bisagra ahora es arriba */
+            transition: transform 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 10;
+            border-radius: 8px 8px 0 0;
+
+            /* Forma triangular */
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Cuando se abre */
+        .envelope-container.opened .envelope-flap {
+            transform: rotateX(180deg); /* 👈 Se despliega hacia abajo */
+        }
+                
+        /* Etiqueta del sobre */
+        .envelope-label {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #8b4513;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            z-index: 5;
+            transition: opacity 0.5s ease 0.8s;
+        }
+        
+        .envelope-container.opened .envelope-label {
+            opacity: 0;
+        }
+        
+        /* Instrucción para hacer click */
+        .click-instruction {
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: #8b4513;
+            font-size: 0.9rem;
+            font-weight: 500;
+            animation: pulse 2s infinite;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: opacity 0.5s ease;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.8; }
+            50% { transform: translateX(-50%) scale(1.05); opacity: 1; }
+        }
+        
+        .envelope-container.opened .click-instruction {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        /* Tarjeta que sale del sobre */
+        .card {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            right: 25px;
+            bottom: 25px;
+            background: linear-gradient(135deg, #fff8f8, #ffe4e6);
+            border-radius: 15px;
+            padding: 30px 25px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            transform: translateY(80px) scale(0.8);
+            opacity: 0;
+            transition: all 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1s;
+            z-index: 1;
+            border: 3px solid rgba(255, 182, 193, 0.6);
+            overflow-y: auto;
+            max-height: none;
+        }
+        
+        .envelope-container.opened .card {
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            max-height: 560px;
+            overflow-y: auto;
+        }
+        
+        .heart-corner {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.8rem;
+            animation: heartPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes heartPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        .grad-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            animation: celebration 3s ease-in-out infinite;
+        }
+        
+        @keyframes celebration {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(10deg); }
+        }
+        
+        .main-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #e91e63, #9c27b0);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            color: #8b5a5a;
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+        
+        .achievement-highlight {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            color: white;
+            padding: 16px;
+            border-radius: 20px;
+            margin: 20px 0;
+            font-weight: 600;
+            font-size: 1rem;
+            box-shadow: 0 10px 25px rgba(255, 107, 157, 0.4);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .personal-message {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: #5a4a4a;
+            margin: 20px 0;
+            font-weight: 400;
+            text-align: left;
+            background: rgba(255, 182, 193, 0.1);
+            padding: 18px;
+            border-radius: 15px;
+            border-left: 4px solid #ff69b4;
+        }
+        
+        .social-love {
+            background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+            padding: 16px;
+            border-radius: 15px;
+            margin: 20px 0;
+            color: #6c5ce7;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border: 2px dashed #ff69b4;
+        }
+        
+        .best-wishes {
+            background: linear-gradient(135deg, #a8e6cf, #dcedc1);
+            padding: 18px;
+            border-radius: 15px;
+            margin: 20px 0;
+            color: #2d3436;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 105, 180, 0.3);
+        }
+        
+        .signature {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            color: #e91e63;
+            margin-top: 25px;
+            font-weight: 700;
+        }
+        
+        .love-emphasis {
+            color: #ff1744;
+            font-weight: 600;
+        }
+        
+        /* Confeti que aparece al abrir */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ff69b4;
+            animation: confettiFall 3s linear infinite;
+            z-index: 1000;
+        }
+        
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        .floating-hearts-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0;
+            transition: opacity 1s ease 2s;
+        }
+        
+        .envelope-container.opened + .floating-hearts-bg {
+            opacity: 1;
+        }
+        
+        .floating-heart {
+            position: absolute;
+            font-size: 1.5rem;
+            color: rgba(255, 105, 180, 0.6);
+            animation: floatHeart 5s infinite linear;
+        }
+        
+        @keyframes floatHeart {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Scroll personalizado para la tarjeta */
+        .card::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .card::-webkit-scrollbar-track {
+            background: rgba(255, 182, 193, 0.2);
+            border-radius: 10px;
+        }
+        
+        .card::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #ff69b4, #ff1744);
+            border-radius: 10px;
+        }
+        
+        .card::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #ff1744, #e91e63);
+        }
+            .envelope-container {
+                width: 380px;
+                height: 280px;
+            }
+            
+            .card {
+                padding: 25px 20px;
+            }
+            
+            .main-title {
+                font-size: 1.8rem;
+            }
+            
+            .personal-message, .social-love, .best-wishes {
+                font-size: 0.85rem;
+                padding: 15px;
+            }
+        
+    </style>
+</head>
+<body>
+    <div class="envelope-container" id="envelopeContainer" onclick="openCard()">
+        <div class="envelope-base"></div>
+        <div class="envelope-flap" id="envelopeFlap"></div>
+        
+        <div class="envelope-label">
+            💌 Para Lina! 💌
+        </div>
+        
+        <div class="click-instruction" id="clickHint">
+            👆 ¡Haz click para abrir tu sorpresa!
+        </div>
+        
+        <div class="card" id="card">
+            <div class="heart-corner">💖</div>
+            
+            <div class="grad-icon">🎓</div>
+            
+            <h1 class="main-title">¡Felicitaciones querida Lina!!!</h1>
+            <p class="subtitle">Has logrado algo verdaderamente extraordinario</p>
+            
+            <div class="achievement-highlight">
+                🌟 ¡Tu tesis fue aprobada! 🌟<br>
+                ¡Oficialmente eres una profesional! 🎊
+            </div>
+            
+            <div class="personal-message">
+                Queremos que sepas lo <span class="love-emphasis">inmensamente orgullosos</span> que estamos de ti. Tu dedicación, tu esfuerzo y tu perseverancia nos inspiran cada día. Verte alcanzar esta meta nos llena el corazón de alegría y admiración. Has demostrado que eres capaz de lograr cualquier cosa que te propongas.
+            </div>
+            
+            <div class="best-wishes">
+                Te deseamos <span class="love-emphasis">lo mejor del mundo</span> en esta nueva etapa de tu vida. Que cada día esté lleno de nuevas oportunidades, aventuras emocionantes y toda la felicidad que tu corazón pueda contener. ¡El futuro es tuyo y sabemos que brillarás con luz propia!
+            </div>
+            
+            <div class="signature">
+                Con todo nuestro amor y admiración infinita,<br>
+                <strong>Alejo, Tina y Leria</strong> 💝
+            </div>
+        </div>
+    </div>
+    
+    <div class="floating-hearts-bg" id="heartsBackground"></div>
+    
+    <script>
+        let isOpened = false;
+        
+        function openCard() {
+            if (!isOpened) {
+                const container = document.getElementById('envelopeContainer');
+                container.classList.add('opened');
+                isOpened = true;
+                
+                // Crear confeti al abrir
+                setTimeout(() => {
+                    createConfetti();
+                    startFloatingHearts();
+                }, 1500);
+            }
+        }
+        
+        function createConfetti() {
+            const colors = ['#ff69b4', '#ffd700', '#ff6b9d', '#a8e6cf', '#ffeaa7'];
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    confetti.style.animationDelay = Math.random() * 2 + 's';
+                    confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+                    
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 4000);
+                }, i * 50);
+            }
+        }
+        
+        function createFloatingHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'floating-heart';
+            heart.innerHTML = ['💖', '💕', '💗', '💝'][Math.floor(Math.random() * 4)];
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.animationDelay = Math.random() * 3 + 's';
+            heart.style.animationDuration = (4 + Math.random() * 2) + 's';
+            
+            document.getElementById('heartsBackground').appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 6000);
+        }
+        
+        function startFloatingHearts() {
+            // Crear corazones cada 1.5 segundos
+            setInterval(createFloatingHeart, 1500);
+            
+            // Crear algunos corazones iniciales
+            for (let i = 0; i < 5; i++) {
+                setTimeout(createFloatingHeart, i * 300);
+            }
+        }
+        
+        // Efecto de brillo en el sobre al pasar el mouse
+        document.getElementById('envelopeContainer').addEventListener('mouseenter', function() {
+            if (!isOpened) {
+                this.style.filter = 'brightness(1.1)';
+            }
+        });
+        
+        document.getElementById('envelopeContainer').addEventListener('mouseleave', function() {
+            if (!isOpened) {
+                this.style.filter = 'brightness(1)';
+            }
+        });
+        
+        // Añadir efecto de escritura a máquina para el mensaje principal
+        function typeWriter() {
+            if (isOpened) {
+                const messages = document.querySelectorAll('.personal-message, .social-love, .best-wishes');
+                messages.forEach((msg, index) => {
+                    setTimeout(() => {
+                        msg.style.animation = 'fadeInUp 0.8s ease-out forwards';
+                    }, index * 400 + 2000);
+                });
+            }
+        }
+        
+        // CSS para la animación de aparición
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Ejecutar animación de escritura cuando se abra
+        document.getElementById('envelopeContainer').addEventListener('click', typeWriter);
+    </script>
+</body>
+</html>
